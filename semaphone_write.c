@@ -40,7 +40,7 @@ int main(){
     //we want to change current position in the opened file
     //move position by the offset relative to END of the file
     lseek(fd, (*length) * -1, SEEK_END);
-    char buffer[*length];
+    char *buffer = malloc((int)*length);
     read(fd, buffer, *length);
     printf("Last line added to story: %s \n", buffer); //display last line added!
   }

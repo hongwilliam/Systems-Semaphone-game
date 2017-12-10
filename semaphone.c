@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#define KEY 831
+#define KEY 832
 
 int main(int argc, char *argv[]){
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]){
     else{
       struct stat st; 
       stat("story.txt", &st);
-      char *buffer = malloc(st.st_size);
+      char *buffer = malloc(st.st_size + 1);
       read(f, buffer, sizeof(buffer));
       printf("story: %s\n",buffer);
       free(buffer);
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
     else{
       struct stat st;
       stat("story.txt", &st);
-      char *buffer = malloc(st.st_size);
+      char *buffer = malloc(st.st_size + 1);
       read(f, buffer, sizeof(buffer));
       printf("story: %s\n",buffer);
       free(buffer);
