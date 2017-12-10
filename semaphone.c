@@ -55,8 +55,10 @@ int main(int argc, char *argv[]){
     f = open("story.txt", O_CREAT | O_EXCL | O_TRUNC, 0600);
     if(f == -1)
       printf("could not create story file: %s\n",strerror(errno));
-    else
+    else{
       printf("story file created: %d\n",f);
+      close(f);
+    }
     
   }
 
@@ -80,7 +82,7 @@ int main(int argc, char *argv[]){
     //remove shared memory
     shmid = shmget(KEY, sizeof(int), 0600);
     char* shm = shmat(shmid,0,0);
-    int s = shmdt(shm);
+    int s = shmdt(shm);    
     if(s == -1)
       printf("could not detach shared memory: %s\n",strerror(errno));
     else
@@ -97,12 +99,15 @@ int main(int argc, char *argv[]){
     if(f == -1)
       printf("could not access story: %s\n",strerror(errno));
     else{
+      //get the length of the story
       struct stat st; 
       stat("story.txt", &st);
-      char *buffer = malloc(st.st_size + 1);
-      read(f, buffer, sizeof(buffer));
-      printf("story: %s\n",buffer);
+      size_t size = st.st_size;
+      char *buffer = calloc(size,sizeof(char)); //calloc the necessary length
+      read(f, buffer, size);
+      printf("\nstory: \n%s\n",buffer);
       free(buffer);
+      close(f);
       remove("story.txt");
     }
   }
@@ -115,11 +120,14 @@ int main(int argc, char *argv[]){
     if(f == -1)
       printf("could not access story: %s\n",strerror(errno));
     else{
+      //get the length of the story
       struct stat st;
       stat("story.txt", &st);
-      char *buffer = malloc(st.st_size + 1);
-      read(f, buffer, sizeof(buffer));
-      printf("story: %s\n",buffer);
+      size_t size = st.st_size;
+      char *buffer = calloc(size,sizeof(char)); //calloc the necessary length
+      read(f, buffer, size);
+      printf("story: \n%s\n",buffer);
+      close(f);
       free(buffer);
     }
   }
