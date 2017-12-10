@@ -81,17 +81,11 @@ int main(int argc, char *argv[]){
     
     //remove shared memory
     shmid = shmget(KEY, sizeof(int), 0600);
-    char* shm = shmat(shmid,0,0);
-    int s = shmdt(shm);    
+    int s = shmctl(shmid,IPC_RMID,0);
     if(s == -1)
-      printf("could not detach shared memory: %s\n",strerror(errno));
-    else
-      printf("memory detached: %d\n", s);
-    int s2 = shmctl(shmid,IPC_RMID,0);
-    if(s2 == -1)
       printf("could not remove shared memory: %s\n",strerror(errno));
     else{
-      printf("memory removed: %d\n", s2);
+      printf("memory removed: %d\n", s);
     }
 
     //remove story

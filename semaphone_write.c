@@ -16,6 +16,12 @@
 int main(){
   int semid = semget(KEY, 1, 0600);
 
+  //if semid fails
+  if(semid == -1){
+      printf("semaphore error: %s\n",strerror(errno));
+      return -1;
+  }
+  
   //this is for the operation argument for semop
   struct sembuf atomic_op;
   atomic_op.sem_op = -1; //for down
