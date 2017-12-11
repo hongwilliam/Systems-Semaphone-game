@@ -18,8 +18,8 @@ int main(){
 
   //if semid fails
   if(semid == -1){
-      printf("semaphore error: %s\n",strerror(errno));
-      return -1;
+    printf("semaphore error: %s\n",strerror(errno));
+    return -1;
   }
   
   //this is for the operation argument for semop
@@ -29,27 +29,37 @@ int main(){
   atomic_op.sem_flg = SEM_UNDO; //allow OS to undo given operation
   semop(semid, &atomic_op, 1); //now performing operation on the semaphore
 
-  int fd = open("story.txt", O_RDWR | O_APPEND, 0600);
-
   //access shared memory to contain last line size
-  int shmid = shmget(KEY, sizeof(int), IPC_CREAT | IPC_EXCL | 0600);
-
+  int shmid = shmget(KEY, sizeof(int), 0600);
+  if(shmid == -1){
+    printf("shared memory error: %s\n",strerror(errno));
+    return -1;
+  }
+  
   //attach shared memory segment by setting pointer to segment
   int *length = shmat(shmid, 0, 0);
 
   //if shmget fails, then the opened file has a last line entered and was accessed
-  if (shmid == -1){
-    //create a shared memory segment
-    shmid = shmget(KEY, sizeof(int), IPC_CREAT | 0600); //no need for IPC_EXCL
-    length = shmat(shmid, 0, 0);
+  //if (shmid == -1){
+  //create a shared memory segment
+  //shmid = shmget(KEY, sizeof(int), IPC_CREAT | 0600); //no need for IPC_EXCL
+  //length = shmat(shmid, 0, 0);
 
-    //we want to change current position in the opened file
-    //move position by the offset relative to END of the file
-    lseek(fd, (*length) * -1, SEEK_END);
-    char *buffer = malloc((int)*length); //malloc the necessary length
-    read(fd, buffer, *length);
-    printf("Last line added to story: %s \n", buffer); //display last line added!
+
+  int fd = open("story.txt", O_RDWR | O_APPEND, 0600);
+  if(fd == -1){
+    printf("file error: %s\n",strerror(errno));
+    return -1;
   }
+
+  
+  //we want to change current position in the opened file
+  //move position by the offset relative to END of the file
+  lseek(fd, (*length) * -1, SEEK_END);
+  char *buffer = malloc((int)*length); //malloc the necessary length
+  read(fd, buffer, *length);
+  printf("Last line added to story: %s \n", buffer); //display last line added!
+  //}
 
   //prompt use for next line
   printf("Enter next line: \n");
