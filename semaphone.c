@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
       printf("could not create semaphore: %s\n",strerror(errno));
     else{
       union semun su;
-      su.val = 10;
+      su.val = 1;
       int v = semctl(semid,0,SETVAL,su);
       printf("semaphore created: %d\n",semid);
       printf("value set: %d\n",v);
@@ -100,8 +100,8 @@ int main(int argc, char *argv[]){
       char *buffer = calloc(size,sizeof(char)); //calloc the necessary length
       read(f, buffer, size);
       printf("\nstory: \n%s\n",buffer);
-      free(buffer);
       close(f);
+      free(buffer);
       remove("story.txt");
     }
   }

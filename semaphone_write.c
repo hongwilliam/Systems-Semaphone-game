@@ -39,19 +39,12 @@ int main(){
   //attach shared memory segment by setting pointer to segment
   int *length = shmat(shmid, 0, 0);
 
-  //if shmget fails, then the opened file has a last line entered and was accessed
-  //if (shmid == -1){
-  //create a shared memory segment
-  //shmid = shmget(KEY, sizeof(int), IPC_CREAT | 0600); //no need for IPC_EXCL
-  //length = shmat(shmid, 0, 0);
-
-
+  //open the story file
   int fd = open("story.txt", O_RDWR | O_APPEND, 0600);
   if(fd == -1){
     printf("file error: %s\n",strerror(errno));
     return -1;
   }
-
   
   //we want to change current position in the opened file
   //move position by the offset relative to END of the file
@@ -59,7 +52,6 @@ int main(){
   char *buffer = malloc((int)*length); //malloc the necessary length
   read(fd, buffer, *length);
   printf("Last line added to story: %s \n", buffer); //display last line added!
-  //}
 
   //prompt use for next line
   printf("Enter next line: \n");
